@@ -27,14 +27,16 @@ public class DVDRuntime extends DVD{
         this.runtime = runtime;
     }
 
-	//Calculates the total value of the stock including a 5% fee.
+	//Calculates the total value.
     public double value() {
-        return 1.05 * getDvdPrice() * getDvdStock();
+        totalValue = getDvdPrice() * getDvdStock();
+        return totalValue;
     }
 
     //Calculates the 5% fee on the total price.
     public double fee() {
-        return 0.05 * getDvdPrice() * getDvdStock();
+        totalWithFee = 0.05 * getDvdPrice() * getDvdStock();
+        return totalWithFee;
     }
 
 }
