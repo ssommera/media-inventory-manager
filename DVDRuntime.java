@@ -1,29 +1,40 @@
 package test;
 
+//Extends the DVD class to include runtime information for a DVD.
+
 public class DVDRuntime extends DVD{
 
-    private double runtime = 0;
+    /**
+     * Constructs a DVDRuntime object with specified details and runtime.
+     *
+     * @param item    the DVD item number
+     * @param title   the title of the DVD
+     * @param stock   the number of items in stock
+     * @param price   the price of each DVD
+     * @param runtime the runtime of the DVD in minutes
+     */
 
-	 public DVDRuntime(int item, String title, int stock, double price, double runtime)
-    {
+	 public DVDRuntime(int item, String title, int stock, double price, double runtime) {
         super( item,  title,  stock,  price);
-		 this.runtime = runtime;
+		this.runtime = runtime;
     }
 
+    //Gets and sets the runtime of the DVD.
     public double getRuntime() {
         return runtime;
     }
-
     public void setRuntime(double runtime) {
         this.runtime = runtime;
     }
 
-	/*// Total value
-	public double value() {
-		return 1.05*getDvdPrice()*getDvdStock();
-	}
-	// fee
-	public double fee() {
-		return 0.05*getDvdPrice()*getDvdStock();
-	}*/
-}//end class DVDRuntime
+	//Calculates the total value of the stock including a 5% fee.
+    public double value() {
+        return 1.05 * getDvdPrice() * getDvdStock();
+    }
+
+    //Calculates the 5% fee on the total price.
+    public double fee() {
+        return 0.05 * getDvdPrice() * getDvdStock();
+    }
+
+}

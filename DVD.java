@@ -1,5 +1,7 @@
 package test;
 
+// Represents a DVD item with details such as item number, title, stock, and price.
+
 public class DVD {
 	
 	private int dvdItem;
@@ -8,60 +10,60 @@ public class DVD {
 	private double dvdPrice;
 	private double total;
 
+	/**
+     * Constructs a DVD object with specified item number, title, stock quantity, and price.
+     *
+     * @param item  the DVD item number
+     * @param title the title of the DVD
+     * @param stock the number of items in stock
+     * @param price the price of each DVD
+     */
+
 	public DVD(int item, String title, int stock, double price) {
 	dvdItem = item;
 	dvdTitle = title;
 	dvdStock = stock;
 	dvdPrice = price;
 
-	} //end four-argument constructor
-
-	//default constructor
-     // public DVD(){}
-
-	// total value
-		public double total(){
-	return dvdPrice*dvdStock;
 	}
 
-	// getters and setters
+	// Calculates the total value of this DVD stock.
+	public double total() {
+    	double totalValue = dvdPrice * dvdStock;
+    return totalValue;
+}
 
-	// set DVD Item
+	// Getters and Setters
+
 	public void setDvdItem(int item) {
-	this.dvdItem = item;
+		this.dvdItem = item;
 	}
-
-	//return DVD Item
 	public int getDvdItem() {
-	return dvdItem;
+		return dvdItem;
 	}
 
-	//set DVD Title
+
 	public void setDvdTitle(String title) {
-	this.dvdTitle = title;
+		this.dvdTitle = title;
+	}
+	public String getDvdTitle() {
+		return dvdTitle;
 	}
 
-	//return Dvd Title
-	public String getDvdTitle() {
-	return dvdTitle;
-	} //end method get Dvd Title
 
 	public void setDvdStock(int stock) {
-	this.dvdStock = stock;
-	} //end method set Dvd Stock
-
-	//return dvd Stock
+		this.dvdStock = stock;
+	}
 	public int getDvdStock() {
-	return dvdStock;
-	} //end method get Dvd Stock
+		return dvdStock;
+	}
 
-	public void setDvdPrice(double price) {
-	this.dvdPrice = price;
-	} //end method setdvdPrice
 
-	//return DVD Price
 	public double getDvdPrice() {
-	return dvdPrice;
-	} //end method get Dvd Price
-	
-} //end class DVD
+		return dvdPrice;
+	}
+	public void setDvdPrice(double price) {
+		this.dvdPrice = price;
+	}
+
+}

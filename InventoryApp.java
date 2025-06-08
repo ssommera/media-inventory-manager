@@ -4,6 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 
+// A Swing GUI application to manage an Inventory of DVDs (DVDRuntime objects)
 
 public class InventoryApp extends JFrame{
 
@@ -12,33 +13,54 @@ public class InventoryApp extends JFrame{
 	private int currentDisplay = 0;
 
 	public InventoryApp() {
-		super ( "DVD Inventory Program" );
+		super ("DVD Inventory Program");
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		init();
 	}
 
 	private void init(){
 	
-		// create a default starter object
-		DVDRuntime p1 = new DVDRuntime(0, " ", 0, 0, 0);
+		// Create a default starter DVD to avoid empty list issues
+		DVDRuntime defaultDVD = new DVDRuntime(0, " ", 0, 0, 0);
 
-		//create an inventory and load the object
+		// Initialize inventory and add starter DVD
 		inv = new Inventory();
-		inv.add(p1);
+		inv.add(defaultDVD);
 
-		// graphical interface
+
+		/* 
+ 		* Panels:
+ 		* 	mainPanel         The main container panel that holds the text area and sub-panels
+ 		* 	navigationPanel   Contains navigation buttons: First, Previous, Next, Last
+ 		* 	actionsPanel      Contains action buttons: Save, Search, Add, Modify, Delete
+ 		*/
+
+		// Main panel and text area setup
 		JPanel panel = new JPanel();
-		txt = new JTextArea( 15,20 );
-		txt.setEditable( false );//this is a display area so user should not change
+		txt = new JTextArea(15,20);
+		txt.setEditable( false ); // Display only 
 		panel.add(txt);
 
-		JPanel buttonpanel = new JPanel();
-		buttonpanel.setLayout(new BoxLayout(buttonpanel,BoxLayout.Y_AXIS));
+		// Navigation buttons panel (vertical)
+		JPanel navigationPanel = new JPanel();
+		navigationPanel.setLayout(new BoxLayout(navigationPanel,BoxLayout.Y_AXIS));
+
+		// Action buttons panel (vertical)
+		JPanel actionsPanel = new JPanel();
+		actionsPanel.setLayout(new BoxLayout(actionsPanel,BoxLayout.Y_AXIS));
 
 
-		JPanel anotherbuttonpanel = new JPanel();
-		anotherbuttonpanel.setLayout(new BoxLayout(anotherbuttonpanel,BoxLayout.Y_AXIS));
+		/*
+ 		* navigationPanel   
+		*	Contains navigation buttons:
+ 		*		- First: Go to the first DVD in the inventory
+ 		*       - Previous: Go to the previous DVD (wraps to end if at the beginning)
+ 		*       - Next: Go to the next DVD (wraps to start if at the end)
+ 		*       - Last: Go to the last DVD in the inventory
+ 		*/
 
+
+		// Navigation Button: "First":
 		JButton first = new JButton("First");
 		first.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -46,7 +68,9 @@ public class InventoryApp extends JFrame{
 				displayDVD();
 			}
 		});
-		buttonpanel.add(first);
+		navigationPanel.add(first);
+
+		// Navigation Button: "Previous":
 		JButton previous = new JButton("Previous");
 		previous.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -55,7 +79,9 @@ public class InventoryApp extends JFrame{
 				displayDVD();
 			}
 		});
-		buttonpanel.add(previous);
+		navigationPanel.add(previous);
+
+		// Navigation Button: "Next":
 		JButton next = new JButton("Next");
 		next.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -64,7 +90,9 @@ public class InventoryApp extends JFrame{
 				displayDVD();
 			}
 		});
-		buttonpanel.add(next);
+		navigationPanel.add(next);
+
+		// Navigation Button: "Last":
 		JButton last = new JButton("Last");
 		last.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -72,16 +100,30 @@ public class InventoryApp extends JFrame{
 				displayDVD();
 			}
 		});
-		buttonpanel.add(last);
+		navigationPanel.add(last);
 
+
+		/*
+ 		* actionsPanel   
+ 		*	Contains action buttons:
+ 		*		- Save: Save the inventory to a file
+ 		*		- Search: Find a DVD by title and display it
+ 		*		- Add: Create a new DVD entry and add it to the inventory
+ 		*		- Modify: Edit the currently displayed DVD's details
+ 		*		- Delete: Remove the currently displayed DVD from the inventory
+ 		*/
+
+
+		// Action Button: "Save":
 		JButton save = new JButton("Save");
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				inv.save();
 			}
 		});
-		anotherbuttonpanel.add(save);
+		actionsPanel.add(save);
 
+		// Action Button: "Search":
 		JButton search = new JButton("Search");
 		search.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -96,79 +138,78 @@ public class InventoryApp extends JFrame{
 				}
 			}
 		});
-		anotherbuttonpanel.add(search);
+		actionsPanel.add(search);
 
-		JButton add = new JButton("Add");
-		add.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String name = JOptionPane.showInputDialog(InventoryApp.this,
-				"Enter the DVD's Title");
-				int units = Integer.parseInt(JOptionPane.showInputDialog(InventoryApp.this,
-				"Enter the units in stock"));
-				double price = Double.parseDouble(JOptionPane.showInputDialog(InventoryApp.this,
-				"Enter the price of each item"));
-				double runtime = Double.parseDouble(JOptionPane.showInputDialog(InventoryApp.this,
-				"Enter the Runtime in minutes"));
+		// Action Button: "Add":
+        JButton add = new JButton("Add");
+        add.addActionListener(e -> {
+            try {
+                String name = JOptionPane.showInputDialog(InventoryApp.this, "Enter the DVD's Title");
+                if (name == null) return;
 
-				// make the object
-				DVDRuntime dvd = new DVDRuntime(inv.highestNumber()+1, name, units, price, runtime);
+                int units = Integer.parseInt(JOptionPane.showInputDialog(InventoryApp.this, "Enter the units in stock"));
+                double price = Double.parseDouble(JOptionPane.showInputDialog(InventoryApp.this, "Enter the price of each item"));
+                double runtime = Double.parseDouble(JOptionPane.showInputDialog(InventoryApp.this, "Enter the Runtime in minutes"));
 
-				// put it in the inv, at the very end
-				inv.addNewDVDRuntime(dvd);
+                DVDRuntime dvd = new DVDRuntime(inv.highestNumber() + 1, name, units, price, runtime);
+                inv.addNewDVDRuntime(dvd);
 
-				currentDisplay = inv.size()-1;
-				displayDVD();
-			}
-		});
-		anotherbuttonpanel.add(add);
+                currentDisplay = inv.size() - 1;
+                displayDVD();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(InventoryApp.this, "Invalid number format entered.");
+            }
+        });
+        anotherbuttonpanel.add(add);
 
+		// Action Button: "Modify":
 		JButton modify = new JButton("Modify");
-		modify.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// get new values and set them
-				DVDRuntime dvd = inv.get(currentDisplay);
-				dvd.setDvdItem(Integer.parseInt(
-						JOptionPane.showInputDialog(InventoryApp.this,"Enter new item number",dvd.getDvdItem())));
-				dvd.setDvdTitle(
-						JOptionPane.showInputDialog(InventoryApp.this,"Enter new item name",dvd.getDvdTitle()));
-				dvd.setDvdStock(Integer.parseInt(
-						JOptionPane.showInputDialog(InventoryApp.this,"Enter new units in stock",dvd.getDvdStock())));
-				dvd.setDvdPrice(Double.parseDouble(
-						JOptionPane.showInputDialog(InventoryApp.this,"Enter new price of each item",dvd.getDvdPrice())));
-				dvd.setRuntime(Double.parseDouble(
-						JOptionPane.showInputDialog(InventoryApp.this,"Enter new Runtime in minutes",dvd.getRuntime())));
+        modify.addActionListener(e -> {
+            try {
+                DVDRuntime dvd = inv.get(currentDisplay);
+                dvd.setDvdItem(Integer.parseInt(JOptionPane.showInputDialog(InventoryApp.this, "Enter new item number", dvd.getDvdItem())));
+                String newTitle = JOptionPane.showInputDialog(InventoryApp.this, "Enter new item name", dvd.getDvdTitle());
+                if (newTitle != null) dvd.setDvdTitle(newTitle);
+                dvd.setDvdStock(Integer.parseInt(JOptionPane.showInputDialog(InventoryApp.this, "Enter new units in stock", dvd.getDvdStock())));
+                dvd.setDvdPrice(Double.parseDouble(JOptionPane.showInputDialog(InventoryApp.this, "Enter new price of each item", dvd.getDvdPrice())));
+                dvd.setRuntime(Double.parseDouble(JOptionPane.showInputDialog(InventoryApp.this, "Enter new Runtime in minutes", dvd.getRuntime())));
 
-				// show it
-				displayDVD();
-			}
-		});
-		anotherbuttonpanel.add(modify);
+                displayDVD();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(InventoryApp.this, "Invalid number format entered.");
+            }
+        });
+        anotherbuttonpanel.add(modify);
 
-		JButton delete = new JButton("Delete");
-		delete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (inv.size() > 0) { // else there is nothing to delete
-					inv.deleteDVDRuntime(inv.get(currentDisplay));
-					currentDisplay--;
-					if (currentDisplay < 0) currentDisplay = 0;
-					displayDVD();
-				}
-			}
-		});
-		anotherbuttonpanel.add(delete);
+		// Action Button: "Delete":
+		 JButton delete = new JButton("Delete");
+        delete.addActionListener(e -> {
+            if (inv.size() > 0) {
+                inv.deleteDVDRuntime(inv.get(currentDisplay));
+                currentDisplay--;
+                if (currentDisplay < 0) currentDisplay = 0;
+                displayDVD();
+            }
+        });
+        anotherbuttonpanel.add(delete);
 
-		//buttonpanel.add(new Logo());
 
-		panel.add(buttonpanel);
-		panel.add(anotherbuttonpanel);
+		/*
+ 		* mainPanel (panel)
+ 		*	Adds sub-panels to the main interface:
+ 		*		- navigationPanel: Contains navigation buttons (First, Previous, Next, Last)
+ 		*		- actionsPanel: Contains action buttons (Save, Search, Add, Modify, Delete)
+ 		*/
 
+
+		panel.add(navigationPanel);
+		panel.add(actionsPanel);
 		getContentPane().add(panel);
-
 		displayDVD();
 
-	} // end init
+	}
 
-	//display
+	// Displays the details of the current DVD in the text area
 	public void displayDVD() {
 		txt.setText("*********DVD Details**********\n");
 		txt.append("Item number: " + inv.get(currentDisplay).getDvdItem() + "\n");
@@ -176,18 +217,15 @@ public class InventoryApp extends JFrame{
 		txt.append("Units in stock: " + inv.get(currentDisplay).getDvdStock() + "\n");
 		txt.append("Price: $" + String.format("%.2f",inv.get(currentDisplay).getDvdPrice()) + "\n");
 		txt.append( "Runtime in minutes: " + inv.get(currentDisplay).getRuntime() + "\n");
-		//txt.append("Total value: $" + String.format("%.2f",inv.get(currentDisplay).value()) + "\n");
-		//txt.append("Fee: $" + String.format("%.2f",inv.get(currentDisplay).fee()) + "\n\n");
-		//txt.append("Total value: $" + String.format("%.2f",inv.value()));
+		txt.append("Total value: $" + String.format("%.2f",inv.get(currentDisplay).value()) + "\n");
+		txt.append("Fee: $" + String.format("%.2f",inv.get(currentDisplay).fee()) + "\n\n");
+		txt.append("Total value: $" + String.format("%.2f",inv.value()));
 
     }
-
-
 
 	public static void main(String args []){
 		InventoryApp gui = new InventoryApp();
 		gui.pack();
 		gui.setVisible(true);
-		} // end main
-
-} // ends InventoryApp Class
+	}
+}
